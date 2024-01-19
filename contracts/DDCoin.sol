@@ -12,13 +12,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract DDCoin is Ownable {
     mapping (address => uint) private addressToBalance;
 
-    address private approvedExchange;
-
     constructor() Ownable(msg.sender) {}
-
-    function setApprovedExchange(address _approvedExchange) external onlyOwner {
-        approvedExchange = _approvedExchange;
-    }
 
     function queryOwnBalance() external view returns (uint) {
         return addressToBalance[msg.sender];
@@ -31,14 +25,8 @@ contract DDCoin is Ownable {
         addressToBalance[_to] += _amount;
     }
 
-    function transferCoins(uint _amount, address _receiver) external {
+    function transferCoins(address _receiver, uint _amount) external {
         _transfer(msg.sender, _receiver, _amount);
-    }
-
-    function transferOwnerCoins(uint _amount, address _receiver) external {
-        // Either the owner or the approvedExchange can spend the owner's coins
-        require(msg.sender == owner() || msg.sender == approvedExchange);
-        _transfer(owner(), _receiver, _amount);
     }
 
     function mintCoins(uint _amount) external onlyOwner {

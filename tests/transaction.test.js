@@ -5,7 +5,9 @@ const { ethers } = require("hardhat");
 
 describe("Ether transaction", function () {
   it("test transaction", async function () {
+    console.log(ethers.version);
     let [owner] = await ethers.getSigners();
+    owner.provider.pollingInterval = 200;
     let balance = (await owner.getBalance()).toBigInt();
     console.log(`Current balance is: ${balance}`);
     let value = ethers.utils.parseEther("1.0");

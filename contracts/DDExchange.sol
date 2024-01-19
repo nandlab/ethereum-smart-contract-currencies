@@ -15,7 +15,7 @@ contract DDExchange is Ownable {
     address ddtAccount;
     DDCoin ddcInterface;
 
-    constructor() Ownable(msg.sender) {}
+    constructor() payable Ownable(msg.sender) {}
 
     function setDdtAccess(address _ddtAddress, address _ddtAccount) external onlyOwner {
         ddtInterface = DDToken(_ddtAddress);
@@ -33,7 +33,7 @@ contract DDExchange is Ownable {
         }
         else if (keccak256(abi.encodePacked(_symbol)) == keccak256(abi.encodePacked("DDC"))) {
             // This contract should be registered as the approvedExchange
-            ddcInterface.transferOwnerCoins(msg.value, msg.sender);
+            ddcInterface.transferCoins(msg.sender, msg.value);
         }
     }
 }
