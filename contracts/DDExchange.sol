@@ -11,29 +11,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract DDExchange is Ownable {
-    DDToken ddtInterface;
-    address ddtAccount;
-    DDCoin ddcInterface;
+    DDCoin private ddCoin;
+    DDToken private ddToken;
 
-    constructor() payable Ownable(msg.sender) {}
-
-    function setDdtAccess(address _ddtAddress, address _ddtAccount) external onlyOwner {
-        ddtInterface = DDToken(_ddtAddress);
-        ddtAccount = _ddtAccount;
+    constructor(address _ddCoinAddr, address _ddTokenAddr) payable Ownable(msg.sender) {
+        ddCoin = DDCoin(_ddCoinAddr);
+        ddToken = DDToken(_ddTokenAddr);
     }
 
-    function setDdcAddress(address _ddcAddress) external onlyOwner {
-        ddcInterface = DDCoin(_ddcAddress);
+    enum CurrencyType {
+        DDCoin,
+        DDToken
     }
 
-    function exchangeEtherToMyCurrency(string calldata _symbol) external payable {
-        if (keccak256(abi.encodePacked(_symbol)) == keccak256(abi.encodePacked("DDT"))) {
+    function exchangeEtherToMyCurrency(CurrencyType _currencyType) external payable {
+        if (_currencyType == CurrencyType.DDToken) {
             // This contract should be approved to transfer tokens from the specified ddtAccount
-            ddtInterface.transferFrom(ddtAccount, msg.sender, msg.value);
+            ddToken.transferFrom(address(this), msg.sender, msg.value);
         }
-        else if (keccak256(abi.encodePacked(_symbol)) == keccak256(abi.encodePacked("DDC"))) {
+        else /* _currencyType == CurrencyType.DDCoin */ {
             // This contract should be registered as the approvedExchange
-            ddcInterface.transferCoins(msg.sender, msg.value);
+            ddCoin.transferCoins(msg.sender, msg.value);
         }
     }
 }
