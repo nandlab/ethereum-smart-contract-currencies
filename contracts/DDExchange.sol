@@ -11,8 +11,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract DDExchange is Ownable {
-    DDCoin private ddCoin;
-    DDToken private ddToken;
+    DDCoin public ddCoin;
+    DDToken public ddToken;
 
     constructor(address _ddCoinAddr, address _ddTokenAddr) payable Ownable(msg.sender) {
         ddCoin = DDCoin(_ddCoinAddr);
@@ -24,13 +24,12 @@ contract DDExchange is Ownable {
         DDToken
     }
 
-    function exchangeEtherToMyCurrency(CurrencyType _currencyType) external payable {
+    function exchangeEtherToDDCurrency(CurrencyType _currencyType) external payable {
+        // This contract should already own enough DDCoin or DDToken for this exchange to work.
         if (_currencyType == CurrencyType.DDToken) {
-            // This contract should be approved to transfer tokens from the specified ddtAccount
-            ddToken.transferFrom(address(this), msg.sender, msg.value);
+            ddToken.transfer(msg.sender, msg.value);
         }
         else /* _currencyType == CurrencyType.DDCoin */ {
-            // This contract should be registered as the approvedExchange
             ddCoin.transferCoins(msg.sender, msg.value);
         }
     }

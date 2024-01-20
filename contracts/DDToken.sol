@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title DDToken
- * @dev An ERC20 token implementation with a fixed supply of 1 million units
+ * @dev An ERC20 token with a fixed supply of 1 million units
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract DDToken is ERC20, ERC20Permit {
